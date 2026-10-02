@@ -310,7 +310,7 @@ export default function CaptainOrdersScreen() {
   const [openedOrderSection, setOpenedOrderSection] =
     useState<"available" | "active" | null>(null);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const [historyPage, setHistoryPage] =
@@ -349,11 +349,7 @@ export default function CaptainOrdersScreen() {
 
 
   const load = useCallback(
-    async (silent = false) => {
-      if (!silent) {
-        setLoading(true);
-      }
-
+    async (_silent = false) => {
       try {
         const response = await getOrders();
 
@@ -412,10 +408,11 @@ export default function CaptainOrdersScreen() {
   );
 
   useEffect(() => {
-    load();
+    // أول تحميل يتم في الخلفية حتى لا تظهر شاشة "جاري التحميل" عند فتح التطبيق.
+    void load(true);
 
     const timer = setInterval(() => {
-      load(true);
+      void load(true);
     }, 15000);
 
     return () => clearInterval(timer);
