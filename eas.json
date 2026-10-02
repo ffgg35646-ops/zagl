@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/eas.json",
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://dzwan.vercel.app/api"
+      },
+      "channel": "preview"
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "environment": "production",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://dzwan.vercel.app/api"
+      },
+      "autoIncrement": true,
+      "channel": "production"
+    }
+  },
+  "cli": {
+    "appVersionSource": "remote"
+  }
+}

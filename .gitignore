@@ -39,3 +39,18 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Local backups / temporary files
+*.bak
+*.log
+.env.local.bak-*
+/e2e_*.py
+/phase*.py
+/finish_*.py
+/close_last_*.py
+/final_audit.py
+/zajel-e2e-47-report.json
+/logs/
+/activeOrders
+/0
+/=
