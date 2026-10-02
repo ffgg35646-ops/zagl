@@ -18,6 +18,7 @@
         "POST_NOTIFICATIONS"
       ],
       "package": "com.dzwan.zajel",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 3,
       "adaptiveIcon": {
         "backgroundColor": "#FFF3DE",
