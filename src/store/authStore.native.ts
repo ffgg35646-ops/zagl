@@ -62,8 +62,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         accountType: user.role,
       });
 
-      void bootstrapAfterLogin(user.role);
-
       return user;
     } catch {
       return null;
