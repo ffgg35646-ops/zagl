@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "609171683236",
+    "project_id": "zagla-ebc38",
+    "storage_bucket": "zagla-ebc38.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609171683236:android:7e5ed274d75276fa573331",
+        "android_client_info": {
+          "package_name": "com.dzwan.zajel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIFUGr0FijXqrijNibiZXY8rENFwFQzsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
