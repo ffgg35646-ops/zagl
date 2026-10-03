@@ -5,6 +5,7 @@ import {
 } from "../../api/captainOrderBoard";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   ActivityIndicator,
   Alert,
@@ -41,6 +42,8 @@ const HISTORY_STATUSES = [
 ] as const;
 
 const HISTORY_PAGE_SIZE = 5;
+const ORDERS_CACHE_KEY = "@zajel/orders-cache-v1";
+const AVAILABLE_ORDERS_CACHE_KEY = "@zajel/available-orders-cache-v1";
 
 const EMERGENCY_REASONS: Array<{
   value: CaptainEmergencyType;
@@ -358,6 +361,12 @@ export default function CaptainOrdersScreen() {
         );
 
         setOrders(list);
+
+        // نحفظ آخر نسخة حتى تظهر الطلبات فورًا في الزيارة التالية.
+        void AsyncStorage.setItem(
+          ORDERS_CACHE_KEY,
+          JSON.stringify(list),
+        ).catch(() => {});
       } catch {
         // لا نكسر الشاشة عند فشل التحديث.
       } finally {
@@ -408,8 +417,32 @@ export default function CaptainOrdersScreen() {
   );
 
   useEffect(() => {
-    // أول تحميل يتم في الخلفية حتى لا تظهر شاشة "جاري التحميل" عند فتح التطبيق.
-    void load(true);
+    // نعرض آخر نسخة محفوظة فورًا، ثم نجلب البيانات الجديدة في الخلفية.
+    void (async () => {
+      try {
+        const cached = await AsyncStorage.getItem(ORDERS_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed)) {
+            setOrders(sortNewestFirst(parsed));
+          }
+        }
+
+        const cachedAvailable = await AsyncStorage.getItem(
+          AVAILABLE_ORDERS_CACHE_KEY,
+        );
+        if (cachedAvailable) {
+          const parsedAvailable = JSON.parse(cachedAvailable);
+          if (Array.isArray(parsedAvailable)) {
+            setAvailableOrders(sortNewestFirst(parsedAvailable));
+          }
+        }
+      } catch {
+        // الكاش اختياري؛ لا يمنع جلب البيانات من السيرفر.
+      }
+
+      void load(true);
+    })();
 
     const timer = setInterval(() => {
       void load(true);
