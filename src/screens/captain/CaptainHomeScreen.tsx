@@ -371,315 +371,208 @@ function statusLabel(status?: string) {
 function DeliveryRiderVector() {
   return (
     <Svg
-      width="190"
-      height="165"
-      viewBox="0 0 220 185"
+      width="250"
+      height="210"
+      viewBox="0 0 250 210"
+      fill="none"
     >
-      <Defs>
-        <SvgGradient
-          id="jacketGradient"
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-        >
-          <Stop offset="0" stopColor="#FFF7ED" />
-          <Stop offset="0.55" stopColor="#FFE1BF" />
-          <Stop offset="1" stopColor="#F97316" />
-        </SvgGradient>
+      {/* soft floating halo */}
+      <Circle
+        cx="166"
+        cy="72"
+        r="62"
+        fill="#FFFFFF"
+        opacity={0.13}
+      />
 
-        <SvgGradient
-          id="bikeGradient"
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-        >
-          <Stop offset="0" stopColor="#FFB52E" />
-          <Stop offset="0.5" stopColor="#F97316" />
-          <Stop offset="1" stopColor="#D94801" />
-        </SvgGradient>
+      {/* speed marks */}
+      <Path
+        d="M22 91H57"
+        stroke="#FFFFFF"
+        strokeWidth="5"
+        strokeLinecap="round"
+        opacity={0.55}
+      />
+      <Path
+        d="M15 105H43"
+        stroke="#FFFFFF"
+        strokeWidth="3"
+        strokeLinecap="round"
+        opacity={0.38}
+      />
 
-        <SvgGradient
-          id="helmetGradient"
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-        >
-          <Stop offset="0" stopColor="#FFFFFF" />
-          <Stop offset="1" stopColor="#FFE0B2" />
-        </SvgGradient>
-      </Defs>
+      {/* delivery box rising behind the rider */}
+      <Rect
+        x="43"
+        y="75"
+        width="55"
+        height="47"
+        rx="12"
+        fill="#D94801"
+      />
+      <Rect
+        x="51"
+        y="83"
+        width="39"
+        height="31"
+        rx="7"
+        fill="#FFF7ED"
+        opacity={0.94}
+      />
+      <Path
+        d="M60 91H81"
+        stroke="#F97316"
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
+      <Path
+        d="M64 84V78C64 73 68 69 73 69H76C81 69 85 73 85 78V84"
+        stroke="#FFF7ED"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
 
-      <G>
+      {/* motorcycle wheels */}
+      <Circle cx="66" cy="163" r="28" fill="#24170F" />
+      <Circle cx="66" cy="163" r="15" fill="#FFF7ED" />
+      <Circle cx="66" cy="163" r="6" fill="#B8AAA0" />
 
-        {/* shadow */}
-        <Path
-          d="M28 160 C70 145 160 144 196 158 C168 174 62 176 28 160 Z"
-          fill="#7C2D12"
-          opacity={0.2}
-        />
+      <Circle cx="184" cy="163" r="28" fill="#24170F" />
+      <Circle cx="184" cy="163" r="15" fill="#FFF7ED" />
+      <Circle cx="184" cy="163" r="6" fill="#B8AAA0" />
 
-        {/* back wheel */}
-        <Circle
-          cx="55"
-          cy="133"
-          r="25"
-          fill="#21170F"
-        />
-        <Circle
-          cx="55"
-          cy="133"
-          r="15"
-          fill="#FFF7ED"
-        />
-        <Circle
-          cx="55"
-          cy="133"
-          r="6"
-          fill="#C7B9AA"
-        />
+      {/* motorcycle frame */}
+      <Path
+        d="M66 163L94 128L126 155L166 155L184 163"
+        stroke="#5A351F"
+        strokeWidth="8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M92 128L118 128L132 143L165 143"
+        stroke="#F97316"
+        strokeWidth="8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
 
-        {/* front wheel */}
-        <Circle
-          cx="169"
-          cy="133"
-          r="25"
-          fill="#21170F"
-        />
-        <Circle
-          cx="169"
-          cy="133"
-          r="15"
-          fill="#FFF7ED"
-        />
-        <Circle
-          cx="169"
-          cy="133"
-          r="6"
-          fill="#C7B9AA"
-        />
+      {/* front fork + handle */}
+      <Path
+        d="M166 155L178 119L198 112"
+        stroke="#5A351F"
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M192 109L205 118"
+        stroke="#5A351F"
+        strokeWidth="6"
+        strokeLinecap="round"
+      />
 
-        {/* frame */}
-        <Path
-          d="M55 119 L87 113 L112 126 L158 126 L170 108"
-          fill="none"
-          stroke="#563824"
-          strokeWidth="7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      {/* motorcycle front light */}
+      <Path
+        d="M193 119L205 122"
+        stroke="#FFD166"
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
 
-        {/* delivery box */}
-        <Rect
-          x="33"
-          y="78"
-          width="47"
-          height="39"
-          rx="9"
-          fill="#E85D04"
-        />
+      {/* seat */}
+      <Path
+        d="M99 126C108 119 124 118 138 124"
+        stroke="#24170F"
+        strokeWidth="10"
+        strokeLinecap="round"
+      />
 
-        <Rect
-          x="39"
-          y="84"
-          width="35"
-          height="26"
-          rx="5"
-          fill="#FFF7ED"
-          opacity={0.72}
-        />
+      {/* rider body - positioned high to feel like it emerges from the card */}
+      <Path
+        d="M130 74C142 70 157 74 164 87L170 119L140 123L127 96C124 87 125 78 130 74Z"
+        fill="#F97316"
+      />
+      <Path
+        d="M137 80L116 98"
+        stroke="#F97316"
+        strokeWidth="10"
+        strokeLinecap="round"
+      />
+      <Path
+        d="M158 84L181 105"
+        stroke="#F97316"
+        strokeWidth="10"
+        strokeLinecap="round"
+      />
 
-        <Path
-          d="M48 91 H66"
-          stroke="#F97316"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
+      {/* hands */}
+      <Circle cx="114" cy="100" r="7" fill="#FFD0A6" />
+      <Circle cx="183" cy="105" r="7" fill="#FFD0A6" />
 
-        {/* bike body */}
-        <Path
-          d="M68 114 C83 89 108 83 133 94 C147 100 153 111 157 123 L105 123 C96 112 86 108 68 114 Z"
-          fill="url(#bikeGradient)"
-        />
+      {/* rider head */}
+      <Circle cx="142" cy="60" r="17" fill="#FFD0A6" />
 
-        <Path
-          d="M92 103 C104 98 116 99 127 104"
-          fill="none"
-          stroke="#FFFFFF"
-          strokeWidth="4"
-          opacity={0.72}
-          strokeLinecap="round"
-        />
+      {/* helmet */}
+      <Path
+        d="M124 59C124 39 135 27 151 27C169 27 181 40 181 58V63H124V59Z"
+        fill="#24170F"
+      />
+      <Path
+        d="M131 50C135 40 143 35 152 35C163 35 172 41 176 51"
+        stroke="#FFB52E"
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
+      <Path
+        d="M163 63H185"
+        stroke="#24170F"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
 
-        {/* handle */}
-        <Path
-          d="M151 96 L169 83 L182 84"
-          fill="none"
-          stroke="#493022"
-          strokeWidth="6"
-          strokeLinecap="round"
-        />
+      {/* rider leg */}
+      <Path
+        d="M146 121L124 148L146 158"
+        stroke="#24170F"
+        strokeWidth="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M146 158H163"
+        stroke="#24170F"
+        strokeWidth="9"
+        strokeLinecap="round"
+      />
 
-        {/* rider leg */}
-        <Path
-          d="M108 103 L126 124 L142 128"
-          fill="none"
-          stroke="#2D241E"
-          strokeWidth="13"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      {/* small foreground shine */}
+      <Circle
+        cx="211"
+        cy="52"
+        r="6"
+        fill="#FFFFFF"
+        opacity={0.72}
+      />
+      <Circle
+        cx="222"
+        cy="69"
+        r="3"
+        fill="#FFFFFF"
+        opacity={0.5}
+      />
 
-        {/* body */}
-        <Path
-          d="M87 55 C100 45 120 47 129 62 L139 91 L118 105 L93 91 L77 73 Z"
-          fill="url(#jacketGradient)"
-        />
-
-        {/* orange jacket side */}
-        <Path
-          d="M118 59 L138 91 L126 100 L111 69 Z"
-          fill="#F97316"
-          opacity={0.84}
-        />
-
-        {/* left arm */}
-        <Path
-          d="M91 61 L73 80 L84 87 L103 72"
-          fill="none"
-          stroke="#FFD0A1"
-          strokeWidth="10"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-
-        {/* right arm */}
-        <Path
-          d="M123 64 L145 82 L166 84"
-          fill="none"
-          stroke="#FFD0A1"
-          strokeWidth="10"
-          strokeLinecap="round"
-        />
-
-        {/* neck */}
-        <Rect
-          x="100"
-          y="40"
-          width="18"
-          height="17"
-          rx="7"
-          fill="#FFD0A1"
-        />
-
-        {/* head */}
-        <Circle
-          cx="109"
-          cy="35"
-          r="24"
-          fill="#FFD0A1"
-        />
-
-        {/* cap */}
-        <Path
-          d="M84 32 C84 16 96 7 109 7 C123 7 134 15 137 29 C127 24 115 21 102 23 C95 24 89 28 84 32 Z"
-          fill="url(#helmetGradient)"
-        />
-
-        <Path
-          d="M88 28 C103 22 121 22 138 28 C141 30 140 34 136 35 C119 31 103 30 88 34 C84 34 84 30 88 28 Z"
-          fill="#F97316"
-        />
-
-        <Path
-          d="M103 12 C96 15 92 20 90 27"
-          fill="none"
-          stroke="#FFFFFF"
-          strokeWidth="3"
-          opacity={0.8}
-          strokeLinecap="round"
-        />
-
-        {/* helmet visor */}
-        <Path
-          d="M93 29 C104 23 121 23 134 29 L132 38 C117 34 105 34 94 38 Z"
-          fill="#5A3824"
-          opacity={0.84}
-        />
-
-        {/* face */}
-        <Circle
-          cx="116"
-          cy="37"
-          r="2.2"
-          fill="#3A251A"
-        />
-
-        <Path
-          d="M120 45 C114 49 109 48 105 45"
-          fill="none"
-          stroke="#A85E35"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-
-        {/* jacket stripe */}
-        <Path
-          d="M91 72 L119 92"
-          stroke="#FFFFFF"
-          strokeWidth="5"
-          opacity={0.82}
-        />
-
-        {/* delivery strap */}
-        <Path
-          d="M88 56 L119 91"
-          fill="none"
-          stroke="#E85D04"
-          strokeWidth="5"
-          opacity={0.8}
-        />
-
-        {/* light highlights */}
-        <Circle
-          cx="77"
-          cy="107"
-          r="4"
-          fill="#FFFFFF"
-          opacity={0.9}
-        />
-
-        <Circle
-          cx="154"
-          cy="110"
-          r="4"
-          fill="#FFFFFF"
-          opacity={0.9}
-        />
-      </G>
+      {/* card-crossing accent line */}
+      <Path
+        d="M32 181C82 174 153 174 219 181"
+        stroke="#FFFFFF"
+        strokeWidth="3"
+        strokeLinecap="round"
+        opacity={0.22}
+      />
     </Svg>
   );
 }
-
-
-function formatShiftClock(value: any) {
-  if (!value) return "";
-
-  const parts = String(value).split(":");
-  const hour24 = Number(parts[0]);
-  const minute = Number(parts[1] || 0);
-
-  if (!Number.isFinite(hour24)) return "";
-
-  const suffix = hour24 >= 12 ? "م" : "ص";
-  const hour12 = hour24 % 12 || 12;
-
-  return `${hour12}:${String(minute).padStart(2, "0")} ${suffix}`;
-}
-
-
 
 export default function CaptainHomeScreen() {
   const selectedShiftFromStore =
@@ -3383,11 +3276,11 @@ const styles = StyleSheet.create({
   },
 
   heroVectorWrap: {
-    width: 220,
-    height: 185,
+    width: 250,
+    height: 210,
     position: "absolute",
-    right: -4,
-    top: 12,
+    right: -12,
+    top: -8,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
