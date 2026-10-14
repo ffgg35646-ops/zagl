@@ -22,6 +22,6 @@ jobs:
         run: npm ci
 
       - name: Publish OTA update
-        run: npx eas-cli update --branch preview --message "GitHub commit ${{ github.sha }}" --non-interactive
+        run: npx eas-cli update --channel production --platform android --environment production --message "Android production OTA - GitHub commit ${{ github.sha }}" --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
