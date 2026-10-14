@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import {
+  createNavigationContainerRef,
   NavigationContainer,
 } from "@react-navigation/native";
 import {
@@ -27,6 +28,7 @@ import { useAuthStore } from "../store/authStore";
 import { api, clearToken, getToken } from "../api/client";
 
 const Stack = createNativeStackNavigator();
+const navigationRef = createNavigationContainerRef<any>();
 
 function routeForRole(role: string | undefined) {
   if (role === "captain") return "CaptainApp";
@@ -54,6 +56,18 @@ export default function AppNavigator() {
   );
   const setUser = useAuthStore((state) => state.setUser);
   const logout = useAuthStore((state) => state.logout);
+
+  useEffect(() => {
+    if (authenticated || !navigationRef.isReady()) return;
+
+    if (navigationRef.getCurrentRoute()?.name !== "SelectRole") {
+      navigationRef.resetRoot({
+        index: 0,
+        routes: [{ name: "SelectRole" }],
+      });
+    }
+  }, [authenticated]);
+
 
   useEffect(() => {
     let active = true;
@@ -182,7 +196,7 @@ export default function AppNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <ThemeProvider>
         <RuntimeGate>
           <Stack.Navigator
