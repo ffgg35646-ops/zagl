@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Linking,
   StyleSheet,
   Text,
@@ -18,7 +17,6 @@ export default function RuntimeGate({
 }) {
   const auth: any = useAuthStore();
 
-  const [loading, setLoading] = useState(true);
   const [maintenance, setMaintenance] = useState(false);
   const [message, setMessage] = useState("");
   const [forceUpdate, setForceUpdate] = useState(false);
@@ -47,9 +45,7 @@ export default function RuntimeGate({
           )
         );
       } catch {
-        // عدم منع التطبيق عند تعطل فحص البوابة مؤقتًا.
-      } finally {
-        if (active) setLoading(false);
+        // تعطل فحص البوابة لا يمنع ظهور التطبيق؛ يعاد الفحص في الجلسة التالية.
       }
     }
 
@@ -59,17 +55,6 @@ export default function RuntimeGate({
       active = false;
     };
   }, [auth?.authenticated, auth?.accountType]);
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text style={styles.text}>
-          جاري تجهيز التطبيق...
-        </Text>
-      </View>
-    );
-  }
 
   if (maintenance) {
     return (
