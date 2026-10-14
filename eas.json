@@ -21,6 +21,18 @@
       },
       "autoIncrement": true,
       "channel": "production"
+    },
+    "production-apk": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "environment": "production",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://dzwan.vercel.app/api"
+      },
+      "autoIncrement": true,
+      "channel": "production"
     }
   },
   "cli": {
