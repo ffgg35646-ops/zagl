@@ -1,1 +1,2 @@
 One-time release trigger for the production Android APK build.
+Build current mobile-session fixes: 0a84e8e28a10a3285db5dff514b7ec12c26f7d78

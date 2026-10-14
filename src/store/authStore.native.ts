@@ -2,7 +2,7 @@ import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
 
 import type { AccountType, AuthUser } from "../types/auth";
-import { clearToken } from "../api/client";
+import { api, clearToken } from "../api/client";
 import {
   bootstrapAfterLogin,
   stopCaptainRuntime,
@@ -77,6 +77,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
 
     void Promise.all([
+      api.post("/auth/logout").catch(() => undefined),
       SecureStore.deleteItemAsync(USER_KEY),
       SecureStore.deleteItemAsync("zajel_token"),
       clearToken(),
