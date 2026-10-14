@@ -147,7 +147,7 @@ export default function AppNavigator() {
             avatarUrl: raw.avatarUrl ?? null,
           } as any;
 
-          setUser(nextUser);
+          await setUser(nextUser);
         } catch (error: any) {
           const status = error?.response?.status;
 

@@ -16,7 +16,7 @@ type AuthState = {
   authenticated: boolean;
 
   setAccountType: (type: AccountType) => void;
-  setUser: (user: AuthUser) => void;
+  setUser: (user: AuthUser) => Promise<void>;
   restoreStoredUser: () => Promise<AuthUser | null>;
   logout: () => void;
 };
@@ -28,14 +28,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setAccountType: (type) => set({ accountType: type }),
 
-  setUser: (user) => {
+  setUser: async (user) => {
     set({
       user,
       authenticated: true,
       accountType: user.role,
     });
 
-    void SecureStore.setItemAsync(
+    // Finish saving the profile before a fresh app launch needs to restore it.
+    await SecureStore.setItemAsync(
       USER_KEY,
       JSON.stringify(user),
     ).catch(() => undefined);
