@@ -42,6 +42,9 @@ import {
   getAvailableShifts,
   selectWeeklyShift,
 } from "../../api/captain";
+import {
+  getShiftInfo,
+} from "../../api/shiftAttendanceRuntime";
 import CaptainOrderBoard from "../../components/captain/CaptainOrderBoard";
 import { getCaptainOrderBoard } from "../../api/captainOrderBoard";
 import { apiGet } from "../../api/request";
@@ -740,12 +743,11 @@ export default function CaptainHomeScreen() {
   const navigation = useNavigation<any>();
   const user = useAuthStore((state) => state.user);
 
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const [capacity, setCapacity] = useState<any>(null);
   const [shift, setShift] = useState<any>(null);
-  // لا نعرض "اختيار الشفت" قبل وصول النتيجة الفعلية من الخادم.
-  const [shiftStatusLoaded, setShiftStatusLoaded] = useState(false);
   const [shiftCardOpen, setShiftCardOpen] =
     useState(false);
   /* HOME_SHIFT_PICKER_V1 */
@@ -978,153 +980,188 @@ export default function CaptainHomeScreen() {
   }
 
   async function loadData() {
-    const tasks: Promise<any>[] = [];
+    try {
+      // البيانات الأساسية فقط: لا نحجز ظهور الشاشة بسبب بيانات ثانوية.
+      const [
+        capacityResult,
+        shiftResult,
+        workAreasResult,
+      ] = await Promise.all([
+        user?.id
+          ? getCaptainCapacity(user.id)
+          : Promise.resolve(null),
 
-    // افحص الشفت وحده؛ لا تجعله ينتظر بيانات السعة أو المناطق.
-    const shiftTask = checkShift()
-      .then((shiftResult) => {
-        if (!shiftResult) return null;
+        checkShift(),
 
-        setShift(shiftResult);
-        setShiftCardOpen(
-          Boolean(shiftResult?.assignment?.shiftId),
-        );
-        setShiftStatusLoaded(true);
+        user?.id
+          ? getMyWorkAreas(user.id)
+          : Promise.resolve(null),
+      ]);
 
-        console.log(
-          "🟠 CHECK SHIFT RESULT:",
-          JSON.stringify(shiftResult, null, 2),
-        );
-
-        return shiftResult;
-      })
-      .catch((error: any) => {
-        console.log(
-          "CAPTAIN SHIFT STATUS LOAD ERROR:",
-          error?.message || error,
-        );
-        // عند فشل التحقق نحتفظ بالحالة المحايدة بدل إظهار أنه لا يملك شفتًا.
-        return null;
-      });
-    tasks.push(shiftTask);
-
-    if (user?.id) {
-      // بيانات الطلبات والسعة تُحدّث عند وصولها، دون تعطيل بقية الواجهة.
-      tasks.push(
-        getCaptainCapacity(user.id)
-          .then((capacityResult) => {
-            setCapacity(capacityResult);
-
-            const availableOrders = getOrders(capacityResult);
-            const firstOrder =
-              availableOrders.find((order) =>
-                [
-                  "assigned",
-                  "heading_to_shop",
-                  "arrived_at_shop",
-                  "picked_up",
-                  "on_the_way",
-                ].includes(order?.status || ""),
-              ) || availableOrders[0];
-
-            setCustomerLocation(getCustomerCoordinate(firstOrder));
-
-            // GPS والمسار عمل ثانوي في الخلفية.
-            void (async () => {
-              try {
-                const gps = await loadGps();
-                const target = getCustomerCoordinate(firstOrder);
-                if (gps && target) {
-                  await buildRoute(gps, target);
-                }
-              } catch {}
-            })();
-
-            return capacityResult;
-          })
-          .catch((error: any) => {
-            console.log(
-              "CAPTAIN CAPACITY LOAD ERROR:",
-              error?.message || error,
-            );
-            return null;
-          }),
+      console.log(
+        "🟠 CHECK SHIFT RESULT:",
+        JSON.stringify(shiftResult, null, 2),
       );
 
-      // المناطق تُعرض فور وصولها، وعدّاد الطلبات يبدأ بعدها في الخلفية.
-      tasks.push(
-        getMyWorkAreas(user.id)
-          .then((workAreasResult) => {
-            const areas =
-              workAreasResult?.workAreas ||
-              workAreasResult?.areas ||
-              workAreasResult?.data ||
-              workAreasResult?.items ||
-              [];
+      setCapacity(capacityResult);
 
-            const activeWorkAreas = Array.isArray(areas)
-              ? areas.filter((item: any) => item?.isActive !== false)
-              : [];
-
-            setWorkAreas(activeWorkAreas);
-
-            const selectedWorkArea = activeWorkAreas[0] || null;
-            setWorkArea(selectedWorkArea);
-
-            const selectedAreaId = String(
-              selectedWorkArea?._id ??
-                selectedWorkArea?.id ??
-                "",
-            );
-
-            if (selectedAreaId) {
-              void getCaptainOrderBoard(selectedAreaId)
-                .then((board) => {
-                  const activeCandidates = [
-                    board?.activeOrders,
-                    board?.data?.activeOrders,
-                  ];
-                  const activeList =
-                    activeCandidates.find((value) => Array.isArray(value)) || [];
-
-                  const availableCandidates = [
-                    board?.availableOrders,
-                    board?.data?.availableOrders,
-                  ];
-                  const availableList =
-                    availableCandidates.find((value) => Array.isArray(value)) || [];
-
-                  setActiveOrdersCount(activeList.length);
-                  setAvailableOrdersCount(availableList.length);
-                })
-                .catch((boardError: any) => {
-                  console.log(
-                    "CAPTAIN HOME BOARD COUNT ERROR:",
-                    boardError?.message || boardError,
-                  );
-                  setAvailableOrdersCount(0);
-                });
-            } else {
-              setAvailableOrdersCount(0);
-            }
-
-            return workAreasResult;
-          })
-          .catch((error: any) => {
-            console.log(
-              "CAPTAIN WORK AREAS LOAD ERROR:",
-              error?.message || error,
-            );
-            return null;
-          }),
+      setShift(
+        shiftResult || null,
       );
-    } else {
-      setAvailableOrdersCount(0);
+
+      setShiftCardOpen(
+        Boolean(
+          shiftResult?.assignment?.shiftId
+        )
+      );
+
+      const areas =
+        workAreasResult?.workAreas ||
+        workAreasResult?.areas ||
+        workAreasResult?.data ||
+        workAreasResult?.items ||
+        [];
+
+      const activeWorkAreas = Array.isArray(areas)
+        ? areas.filter(
+            (item: any) =>
+              item?.isActive !== false,
+          )
+        : [];
+
+      setWorkAreas(activeWorkAreas);
+
+      const selectedWorkArea =
+        activeWorkAreas[0] || null;
+
+      setWorkArea(selectedWorkArea);
+
+      // الشاشة الأساسية تظهر الآن ولا تنتظر:
+      // الحضور + تفاصيل الشفت الإضافية + عداد الطلبات + GPS + route.
+      setLoading(false);
+      setRefreshing(false);
+
+      // معلومات الشفت الإضافية في الخلفية.
+      void getShiftInfo()
+        .then((shiftInfoResult) => {
+          if (!shiftInfoResult) {
+            return;
+          }
+
+          setShift((previous: any) => ({
+            ...(previous || {}),
+            ...(shiftInfoResult || {}),
+            assignment:
+              previous?.assignment ??
+              shiftInfoResult?.assignment ??
+              null,
+            shift:
+              previous?.shift ??
+              shiftInfoResult?.shift ??
+              null,
+          }));
+        })
+        .catch(() => {});
+
+
+      // عداد الطلبات المتاحة في الخلفية.
+      const selectedAreaId = String(
+        selectedWorkArea?._id ??
+          selectedWorkArea?.id ??
+          "",
+      );
+
+      if (selectedAreaId) {
+        void getCaptainOrderBoard(
+          selectedAreaId,
+        )
+          .then((board) => {
+            const activeCandidates = [
+              board?.activeOrders,
+              board?.data?.activeOrders,
+            ];
+
+            const activeList =
+              activeCandidates.find(
+                (value) => Array.isArray(value),
+              ) || [];
+
+            const availableCandidates = [
+              board?.availableOrders,
+              board?.data?.availableOrders,
+            ];
+
+            const availableList =
+              availableCandidates.find(
+                (value) => Array.isArray(value),
+              ) || [];
+
+            setActiveOrdersCount(
+              activeList.length,
+            );
+
+            setAvailableOrdersCount(
+              availableList.length,
+            );
+          })
+          .catch((boardError: any) => {
+            console.log(
+              "CAPTAIN HOME BOARD COUNT ERROR:",
+              boardError?.message ||
+                boardError,
+            );
+
+            setAvailableOrdersCount(0);
+          });
+      } else {
+        setAvailableOrdersCount(0);
+      }
+
+      // الموقع والخريطة في الخلفية.
+      const availableOrders =
+        getOrders(capacityResult);
+
+      const firstOrder =
+        availableOrders.find((order) =>
+          [
+            "assigned",
+            "heading_to_shop",
+            "arrived_at_shop",
+            "picked_up",
+            "on_the_way",
+          ].includes(
+            order?.status || "",
+          ),
+        ) || availableOrders[0];
+
+      setCustomerLocation(
+        getCustomerCoordinate(firstOrder),
+      );
+
+      void (async () => {
+        try {
+          const gps = await loadGps();
+
+          const target =
+            getCustomerCoordinate(firstOrder);
+
+          if (gps && target) {
+            await buildRoute(
+              gps,
+              target,
+            );
+          }
+        } catch {}
+      })();
+    } catch (error: any) {
+      console.log(
+        "CAPTAIN HOME LOAD ERROR:",
+        error?.message || error,
+      );
+
+      setLoading(false);
+      setRefreshing(false);
     }
-
-    // لا نعرض مؤشر تحميل عند فتح الصفحة. التحديث اليدوي فقط له مؤشره.
-    await Promise.allSettled(tasks);
-    setRefreshing(false);
   }
 
   async function buildRoute(
@@ -1361,18 +1398,14 @@ export default function CaptainHomeScreen() {
     shiftCardOpen || Boolean(selectedWeeklyShiftId);
 
   const homeShiftActionTitle =
-    !shiftStatusLoaded
-      ? "عرض صفحة الشفت"
-      : cardShiftSelected
-        ? "تم اختيار الشفت"
-        : "اختيار الشفت";
+    cardShiftSelected
+      ? "تم اختيار الشفت"
+      : "اختيار الشفت";
 
   const homeShiftActionIcon =
-    !shiftStatusLoaded
-      ? "time-outline"
-      : cardShiftSelected
-        ? "checkmark-circle"
-        : "play-circle";
+    cardShiftSelected
+      ? "checkmark-circle"
+      : "play-circle";
 
   const HOME_SHIFT_DAYS = [
     "الأحد",
@@ -1510,7 +1543,7 @@ export default function CaptainHomeScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={refreshing || loading}
             onRefresh={handleRefresh}
             tintColor={ORANGE}
             colors={[ORANGE]}
