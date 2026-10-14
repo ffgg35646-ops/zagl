@@ -287,9 +287,6 @@ export default function ShopOrdersScreen() {
 
   const [detailsById, setDetailsById] =
     useState<Record<string, any>>({});
-
-  const [detailsLoadingId, setDetailsLoadingId] =
-    useState<string | null>(null);
   const [detailsErrorById, setDetailsErrorById] =
     useState<Record<string, boolean>>({});
 
@@ -461,7 +458,6 @@ export default function ShopOrdersScreen() {
     if (!orderId) return;
 
     setDetailsErrorById((current) => ({ ...current, [orderId]: false }));
-    setDetailsLoadingId(orderId);
 
     try {
       const freshOrder = await getOrder(orderId);
@@ -479,12 +475,8 @@ export default function ShopOrdersScreen() {
         [orderId]: details,
       }));
     } catch (error) {
-      console.warn("SHOP ORDER DETAILS LOAD FAILED:", error);
+      console.warn("ORDER DETAILS BACKGROUND REFRESH FAILED:", error);
       setDetailsErrorById((current) => ({ ...current, [orderId]: true }));
-    } finally {
-      setDetailsLoadingId((current) =>
-        current === orderId ? null : current,
-      );
     }
   }
 
@@ -506,22 +498,7 @@ export default function ShopOrdersScreen() {
     const id = getOrderId(order);
     const details = detailsById[id] || order;
 
-    if (detailsLoadingId === id) {
-      return (
-        <View style={styles.loadingDetails}>
-          <ActivityIndicator
-            size="small"
-            color={SHOP_PRIMARY}
-          />
-
-          <Text style={styles.loadingDetailsText}>
-            جاري تحميل التفاصيل...
-          </Text>
-        </View>
-      );
-    }
-
-    if (detailsErrorById[id] && !detailsById[id]) {
+    if (detailsErrorById[id] && !detailsById[id] && !order) {
       return (
         <View
           style={{
